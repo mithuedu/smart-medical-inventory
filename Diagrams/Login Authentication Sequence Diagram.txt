@@ -1,0 +1,69 @@
+@startuml
+title Login Authentication Sequence Diagram
+
+actor User
+participant Frontend
+participant AuthController
+participant UserModel
+participant Database
+participant JWTService
+
+User -> Frontend: Enter Credentials
+activate Frontend
+
+Frontend -> AuthController: Post /login
+activate AuthController
+
+AuthController -> UserModel: Validate Input
+activate UserModel
+
+UserModel -> Database: findUserBy Email()
+activate Database
+Database --> UserModel: Select user data
+deactivate Database
+
+alt User Found
+    UserModel --> AuthController: user found
+    deactivate UserModel
+    
+    AuthController -> UserModel: Compare password
+    activate UserModel
+    
+    alt Password Valid
+        UserModel -> Database: Check verification
+        activate Database
+        Database --> UserModel: verification status
+        deactivate Database
+        
+        UserModel --> AuthController: password valid
+        deactivate UserModel
+        
+        AuthController -> JWTService: generate JWT
+        activate JWTService
+        JWTService --> AuthController: JWT token
+        deactivate JWTService
+        
+        AuthController --> Frontend: Login successful
+        deactivate AuthController
+        Frontend --> User: Login Success
+        deactivate Frontend
+        
+    else Password Invalid
+        UserModel --> AuthController: invalid password
+        deactivate UserModel
+        AuthController --> Frontend: Authentication failed
+        deactivate AuthController
+        Frontend --> User: Login Failed
+        deactivate Frontend
+    end
+    
+else User Not Found
+    UserModel --> AuthController: user not found
+    deactivate UserModel
+    AuthController --> Frontend: User not found
+    deactivate AuthController
+    Frontend --> User: Login Failed
+    deactivate Frontend
+end
+
+@enduml

@@ -1,0 +1,70 @@
+@startuml
+title User Registration Sequence Diagram
+
+actor Patient
+participant Frontend
+participant AuthController
+participant UserModel
+participant OTPModel
+participant "Email Service" as Email
+participant Database
+
+Patient -> Frontend: Enter Details
+activate Frontend
+
+Frontend -> AuthController: Post/register
+activate AuthController
+
+AuthController -> UserModel: Validate Input
+activate UserModel
+
+UserModel -> Database: Select user data
+activate Database
+Database --> UserModel: user data
+deactivate Database
+
+alt User Already Exists
+    UserModel --> AuthController: user Exists
+    AuthController --> Frontend: Error Response
+    Frontend --> Patient: User Already Exists
+else User Does Not Exist
+    UserModel -> UserModel: hash password
+    
+    UserModel -> Database: create User()
+    activate Database
+    Database --> UserModel: Insert new user
+    deactivate Database
+    
+    UserModel --> AuthController: user id
+    deactivate UserModel
+    
+    AuthController -> OTPModel: create OTP()
+    activate OTPModel
+    
+    OTPModel -> Database: insert OTP
+    activate Database
+    Database --> OTPModel: OTP id
+    deactivate Database
+    
+    OTPModel --> AuthController: generate OTP()
+    deactivate OTPModel
+    
+    AuthController -> Email: OTP saved
+    activate Email
+    
+    Email -> Database: send otp Email
+    activate Database
+    Database --> Email: send email
+    deactivate Database
+    
+    Email --> AuthController: email send
+    deactivate Email
+    
+    AuthController --> Frontend: success message
+    deactivate AuthController
+    
+    Frontend --> Patient: success message
+    deactivate Frontend
+end
+
+@enduml

@@ -1,0 +1,50 @@
+@startuml
+title Prescription Management Activity Diagram
+
+start
+
+:User Appointed Data;
+note right: Doctor accesses patient appointment
+
+:View Prescription Data;
+note right: Review patient medical history
+
+:View Prescription in 
+Prescription Page;
+note right: Navigate to prescription interface
+
+:Select Medicine
+Package;
+note right: Choose appropriate medications
+
+:Send Prescription to Pharmacy;
+note right: Submit prescription for processing
+
+:Check Medicine Availability;
+note right: Verify stock levels
+
+if (Medicine Available?) then (Yes)
+  :Update Status in
+  Database;
+  note right: Mark prescription as fulfilled
+  
+  :Generate Medicine List;
+  note right: Create dispensing record
+  
+  :Update Patient List Status;
+  note right: Update patient prescription status
+  
+  :Update Status
+  Successfully;
+  note right: Confirm successful processing
+  
+else (No)
+  :Update Status
+  Unsuccessful;
+  note right: Mark as unavailable/pending
+  
+endif
+
+stop
+
+@enduml

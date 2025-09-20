@@ -1,0 +1,148 @@
+@startuml
+!define RECTANGLE class
+skinparam packageStyle rectangle
+left to right direction
+
+' Actors with inheritance
+actor "Healthcare Staff" as HS #lightblue
+actor "Patient" as P #lightgreen
+actor "Doctor" as D #orange  
+actor "Pharmacist" as Ph #yellow
+actor "Admin" as A #red
+
+' Actor inheritance relationships
+HS <|-- P
+HS <|-- D
+HS <|-- Ph
+HS <|-- A
+
+rectangle "Smart Medical Inventory Management System" as System #lightcyan {
+
+  ' Authentication Use Cases
+  package "Authentication" #mistyrose {
+    usecase "Login" as Login
+    usecase "Register" as Register
+    usecase "Reset Password" as ResetPwd
+    usecase "Validate Credentials" as ValidateCred
+    usecase "Send Verification Email" as SendEmail
+    usecase "Send OTP Email" as SendOTP
+    usecase "Verify OTP" as VerifyOTP
+    usecase "Enable Two-Factor Auth" as TwoFA
+  }
+  
+  ' Inventory Management Use Cases
+  package "Inventory Management" #lightsteelblue {
+    usecase "View Inventory" as ViewInv
+    usecase "Manage Products" as ManageProd
+    usecase "Update Stock Levels" as UpdateStock
+    usecase "Generate Low Stock Alerts" as LowStockAlert
+    usecase "Manage Inventory" as ManageInv
+  }
+  
+  ' Order Management Use Cases
+  package "Order Management" #lightyellow {
+    usecase "Process Orders" as ProcessOrders
+    usecase "View Order History" as ViewOrderHistory
+    usecase "Check Inventory Levels" as CheckInvLevels
+    usecase "Apply Bulk Discount" as BulkDiscount
+  }
+  
+  ' Prescription Management Use Cases
+  package "Prescription Management" #lightpink {
+    usecase "Write Prescriptions" as WritePrescription
+    usecase "Manage Prescriptions" as ManagePrescription
+    usecase "View Prescription History" as ViewPrescHistory
+    usecase "Validate Doctor Authorization" as ValidateDocAuth
+    usecase "Check Drug Interactions" as CheckDrugInt
+    usecase "Verify Prescription" as VerifyPresc
+  }
+  
+  ' Reporting Use Cases
+  package "Reporting & Analytics" #lightcyan {
+    usecase "Generate Reports" as GenReports
+    usecase "View All Reports" as ViewReports
+    usecase "Upload Reports" as UploadReports
+    usecase "Generate Inventory Report" as GenInvReport
+    usecase "Generate Financial Report" as GenFinReport
+    usecase "Access Database" as AccessDB
+  }
+  
+  ' Patient Services Use Cases
+  package "Patient Services" #lightgreen {
+    usecase "Book Appointments" as BookAppt
+    usecase "View Appointment History" as ViewApptHistory
+    usecase "View Patient Records" as ViewPatientRec
+    usecase "Check Doctor Availability" as CheckDocAvail
+  }
+  
+  ' System Administration Use Cases
+  package "System Administration" #lightcoral {
+    usecase "Manage Users" as ManageUsers
+    usecase "Update Status" as UpdateStatus
+    usecase "Validate Admin Rights" as ValidateAdminRights
+  }
+
+  ' Include relationships (mandatory dependencies)
+  Login ..> ValidateCred : <<include>>
+  Register ..> SendEmail : <<include>>
+  ResetPwd ..> SendOTP : <<include>>
+  ResetPwd ..> VerifyOTP : <<include>>
+  ProcessOrders ..> CheckInvLevels : <<include>>
+  WritePrescription ..> ValidateDocAuth : <<include>>
+  ManagePrescription ..> VerifyPresc : <<include>>
+  GenReports ..> AccessDB : <<include>>
+  BookAppt ..> CheckDocAvail : <<include>>
+  ManageUsers ..> ValidateAdminRights : <<include>>
+  ManageProd ..> UpdateStock : <<include>>
+
+  ' Extend relationships (optional features)
+  TwoFA ..> Login : <<extend>>
+  LowStockAlert ..> ManageProd : <<extend>>
+  BulkDiscount ..> ProcessOrders : <<extend>>
+  CheckDrugInt ..> WritePrescription : <<extend>>
+
+  ' Inheritance relationships for use cases
+  GenReports <|-- GenInvReport
+  GenReports <|-- GenFinReport
+  ManageInv <|-- ManageProd
+}
+
+' Actor to Use Case relationships
+P --> Login
+P --> Register
+P --> ResetPwd
+P --> BookAppt
+P --> ViewApptHistory
+P --> ViewPatientRec
+P --> ViewPrescHistory
+
+D --> Login
+D --> ResetPwd
+D --> WritePrescription
+D --> ViewPatientRec
+D --> ViewPrescHistory
+D --> ViewInv
+
+Ph --> Login
+Ph --> ResetPwd
+Ph --> ManagePrescription
+Ph --> ManageProd
+Ph --> ViewInv
+Ph --> ProcessOrders
+Ph --> ViewOrderHistory
+
+A --> Login
+A --> ResetPwd
+A --> ManageUsers
+A --> ViewReports
+A --> GenReports
+A --> UploadReports
+A --> UpdateStatus
+A --> ManageInv
+
+' Healthcare Staff (parent actor) connections
+HS --> Login
+HS --> Register
+HS --> ResetPwd
+
+@enduml

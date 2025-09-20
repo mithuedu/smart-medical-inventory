@@ -1,0 +1,63 @@
+@startuml
+title Appointment Booking Sequence Diagram
+
+actor Patient
+participant Frontend
+participant AppointmentController
+participant DoctorModel
+participant Database
+participant EmailService
+
+Patient -> Frontend: Select Doctor & DateTime
+activate Frontend
+
+Frontend -> AppointmentController: POST /Book Appointment
+activate AppointmentController
+
+AppointmentController -> AppointmentController: Validate Input
+note right: Check required fields, format
+
+AppointmentController -> DoctorModel: Check Doctor Availability
+activate DoctorModel
+
+DoctorModel -> Database: Select Doctor Info
+activate Database
+note right: Query doctor's schedule and availability
+Database --> DoctorModel: Doctor Info (e.g., schedule, holidays)
+deactivate Database
+
+alt Doctor Available
+    DoctorModel --> AppointmentController: Doctor Available
+    deactivate DoctorModel
+
+    AppointmentController -> Database: Insert appointment
+    activate Database
+    note right: Store new appointment details
+    Database --> AppointmentController: Appointment ID / Success Confirmation
+    deactivate Database
+
+    AppointmentController -> EmailService: Send Confirmation Email
+    activate EmailService
+    note right: Send confirmation to patient
+    EmailService --> AppointmentController: Email Sent Successfully
+    deactivate EmailService
+
+    AppointmentController --> Frontend: Success Response (Appointment ID)
+    deactivate AppointmentController
+
+    Frontend --> Patient: Booking Confirmation
+    deactivate Frontend
+
+else Doctor Not Available
+    DoctorModel --> AppointmentController: Doctor Not Available
+    deactivate DoctorModel
+    note right: Or conflicting appointment
+    
+    AppointmentController --> Frontend: Error Response (Doctor Unavailable)
+    deactivate AppointmentController
+    
+    Frontend --> Patient: Booking Failed (Reason)
+    deactivate Frontend
+end
+
+@enduml

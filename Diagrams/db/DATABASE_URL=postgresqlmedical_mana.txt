@@ -1,0 +1,11 @@
+DATABASE_URL=postgresql://medical_management_7fms_user:6HGWaAPY9F7aXDP24xCCSipWWE1HhtVb@dpg-d2vqf5odl3ps739fdibg-a.oregon-postgres.render.com/
+medical_management_7fms
+PORT=8000
+
+EMAIL_PROVIDER=smtp      
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USER=amariyappan.karthik@gmail.com
+EMAIL_PASS=yhovxsctslwbyoeu
+
+OTP_TTL_MINUTES=10

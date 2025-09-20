@@ -1,0 +1,45 @@
+@startuml
+title User Registration Activity Diagram
+
+start
+
+:Enter user info;
+note right: Username, Email, Password, Phone, etc.
+
+:Validate input;
+note right: Check format, required fields
+
+:Check duplicates;
+note right: Check email and username uniqueness
+
+if (User ID already exists?) then (yes)
+  :Return Error Response;
+  note right: "Email/Username already registered"
+  stop
+else (no)
+  :Hash password;
+  note right: Using bcrypt encryption
+  
+  :Create user;
+  note right: Save to database
+  
+  partition "OTP Verification Process" {
+    :Generate 6-digit OTP;
+    
+    :Store OTP in Database;
+    
+    :Send OTP via Email;
+    note right: Email notification to user
+  }
+  
+  :User Registration Successful;
+  note right: Registration completed, awaiting OTP verification
+  
+  :Return Success Response;
+  note right: User can proceed to OTP verification
+  
+endif
+
+stop
+
+@enduml

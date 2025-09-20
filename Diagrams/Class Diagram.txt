@@ -1,0 +1,118 @@
+@startuml
+title Class Diagram - Core System
+
+class User {
+  - id: Integer
+  - username: String
+  - name: String
+  - email: String
+  - phone_number: String
+  - address: String
+  - password_hash: String
+  - role: String
+  - status: Boolean
+  - created_at: DateTime
+  - updated_at: DateTime
+  --
+  + register(): Boolean
+  + login(email: String, password: String): Boolean
+  + logout(): void
+  + resetPassword(email: String): Boolean
+  + updateProfile(data: Object): Boolean
+  + isActive(): Boolean
+  + authenticate(): String
+}
+
+class Product {
+  - product_id: Integer
+  - product_name: String
+  - brand: String
+  - category_id: Integer
+  - description: String
+  - price: Decimal
+  - vendor_level: Integer
+  - created_at: DateTime
+  - updated_at: DateTime
+  - is_active: Boolean
+  --
+  + create(productData: Object): Product
+  + update(id: Integer, data: Object): Boolean
+  + delete(id: Integer): Boolean
+  + getByCategory(categoryId: Integer): Product[]
+  + search(query: String): Product[]
+  + getById(id: Integer): Product
+}
+
+class Order {
+  - order_id: Integer
+  - order_number: String
+  - supplier_id: Integer
+  - order_date: Date
+  - expected_delivery: String
+  - actual_delivery: Date
+  - order_status: String
+  - total_amount: Decimal
+  - created_at: DateTime
+  - approved_by: Integer
+  - notes: String
+  --
+  + create(orderData: Object): Order
+  + updateStatus(status: String): Boolean
+  + approve(approverId: Integer): Boolean
+  + getBySupplier(supplierId: Integer): Order[]
+  + calculateTotal(): Decimal
+  + getOrderItems(): OrderItem[]
+}
+
+class Appointment {
+  - id: Integer
+  - patient_name: String
+  - doctor: String
+  - department: String
+  - appointment_date: Date
+  - appointment_time: Time
+  - mobile_number: String
+  - email: String
+  - doctor_id: Integer
+  - status: String
+  - prescription: String
+  - xray_report: Buffer
+  - xray_report_filename: String
+  - created_at: DateTime
+  --
+  + book(appointmentData: Object): Appointment
+  + updateStatus(status: String): Boolean
+  + uploadReport(file: Buffer, filename: String): Boolean
+  + getPrescription(): String
+  + updatePrescription(prescription: String): Boolean
+  + checkAvailability(date: Date, time: Time): Boolean
+}
+
+class Inventory {
+  - inventory_id: Integer
+  - product_id: Integer
+  - location: String
+  - quantity_available: String
+  - expiry_date: Date
+  - batch_number: String
+  - supplier_id: Integer
+  - purchase_price: Decimal
+  - created_at: DateTime
+  - last_updated: DateTime
+  --
+  + checkLowStock(threshold: Integer): Inventory[]
+  + checkExpiring(days: Integer): Inventory[]
+  + getByProduct(productId: Integer): Inventory[]
+  + getByLocation(location: String): Inventory[]
+  + updateQuantity(productId: Integer, quantity: Integer): Boolean
+  + addStock(productId: Integer, quantity: Integer): Boolean
+}
+
+' Relationships with cardinalities
+User ||--o{ Order : "1 user creates 0..* orders"
+User ||--o{ Appointment : "1 user books 0..* appointments"
+Product ||--|| Inventory : "1 product has 1 inventory record"
+Order }o--|| Product : "1 order contains 1..* products"
+Appointment }o--|| User : "1 appointment assigned to 1 user"
+
+@enduml

@@ -1,0 +1,39 @@
+@startuml
+title Appointment Booking Activity Diagram
+
+start
+
+:Select Doctor and Department;
+note right: Patient chooses specialist/department
+
+:Choose Date and Time;
+note right: Based on doctor's availability
+
+:Enter Patient Details & Notes;
+note right: Name, contact, reason for visit
+
+:Submit Appointment Request;
+note right: Patient clicks 'Book' button
+
+:Validate Appointment Data;
+note right: Check for conflicts, valid inputs
+
+if (Data Valid?) then (yes)
+  :Store in Database;
+  note right: Persist appointment record
+  
+  :Set Status "Pending";
+  note right: Initial status for review
+  
+  :Send Confirmation Email;
+  note right: Notify patient and doctor
+  
+  :Appointment Created;
+else (no)
+  :Return Error;
+  note right: Display validation error message
+endif
+
+stop
+
+@enduml

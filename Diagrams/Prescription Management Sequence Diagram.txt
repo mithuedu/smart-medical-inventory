@@ -1,0 +1,46 @@
+@startuml
+title Prescription Management Sequence Diagram
+
+actor Doctor
+participant Frontend
+participant "Appointment\nController" as AppointmentController  
+participant Database
+participant Pharmacist
+participant Frontend2
+
+== Doctor Reviews and Updates Prescription ==
+Doctor -> Frontend: Review Patient
+activate Frontend
+
+Frontend -> AppointmentController: PUT /appointment/status
+activate AppointmentController
+
+AppointmentController -> Database: update appointment\nstatus and prescription
+activate Database
+Database --> AppointmentController: update result
+deactivate Database
+
+AppointmentController --> Frontend: success
+deactivate AppointmentController
+
+Frontend --> Doctor: status updated
+deactivate Frontend
+
+== Pharmacist Views Prescription ==
+Pharmacist -> Frontend2: View Prescription
+activate Frontend2
+
+Frontend2 -> Database: prescription data
+activate Database
+
+Database -> AppointmentController: select prescription
+activate AppointmentController
+
+AppointmentController --> Database: prescription list
+deactivate AppointmentController
+
+Database --> Frontend2: update status
+deactivate Database
+deactivate Frontend2
+
+@enduml
